@@ -13,48 +13,13 @@ see './LICENSE' for more information.
 # sourcery skip: docstrings-for-modules
 
 import os
-import requests
 
 from dotenv import load_dotenv
 import click
-from rich.console import Console
 
-from clonus import __version__
+from clonus import __version__, CPRINT, SESSION, error, warn
 
 from rich import inspect
-
-
-def setup() -> None:
-    """
-    Set up the console and requests session.
-
-    Returns:
-        Tuple[Console, requests.Session]: A tuple containing the console and requests session objects.
-    """
-
-    load_dotenv()
-
-    req_session = requests.Session()
-    req_session.headers.update(
-        {
-            "User-Agent": f"dev.hexbenjam.in/clonus {__version__}",
-            "Accept": "application/vnd.github+json",
-            "X-GitHub-Api-Version": "2022-11-28",
-        }
-    )
-    return req_session
-
-
-def error(print_func: callable, message: str) -> None:
-    """
-    Print a syled error message and exit.
-
-    Args:
-        message (str): The error message to print.
-    """
-
-    print_func(f"[bold red]!!![/red] {message}")
-    exit(1)
 
 
 @click.command()
@@ -78,19 +43,15 @@ def clone(
     token: str = None,
 ) -> None:
     if version:
-        _print(__version__)
+        CPRINT(__version__)
         exit(0)
 
     if not url:
-        error(_print, "no url specified.")
+        error(CPRINT, "no url specified.")
 
     if token:
-        _reqsession.headers.update({"Authorization": f"Bearer {token}"})
-
-    _print(url)
+        SESSION.headers.update({"Authorization": f"Bearer {token}"})
 
 
 if __name__ == "__main__":
-    _reqsession = setup()
-    _print = Console().print
     clone()
