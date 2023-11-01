@@ -12,32 +12,53 @@ see './LICENSE' for more information.
 
 import os
 import re
+from urllib.parse import urlparse, urljoin
+
+from clonus import error
 
 
-CONTENTS_ENDPOINT = "https://api.github.com/repos/{}/{}/contents"
-TREE_ENDPOINT = "/repos/{owner}/{repo}/git/trees/{sha}"
+API_BASE_URL = "https://api.github.com"
+TREE_ENDPOINT = "/repos/{owner}/{repo}/git/trees/{sha}/{subdir}"
 BASE_NORMALIZE_REGEX = re.compile(r".*github\.com\/")
 
 
-def make_request_obj(url: str) -> None:
+def make_request_url(url: str, owner: str, repo: str, branch: str, subdir: str) -> str:
     """
-    represents a URL object for making requests to a GitHub repository.
+    Generate a request URL based on the provided parameters.
+
+    Args:
+        url (str): The original URL.
+        owner (str): The owner (or username).
+        repo (str): The repository name.
+        branch (str): The branch or reference.
+        subdir (str): The subdirectory, if applicable.
+
+    Returns:
+        str: The generated request URL.
+
+    Raises:
+        None.
     """
 
-    # https://github.com/hexbenjamin/clonus/tree/7068e8ebd5c971c8af769967bb09be9ef3d4dd1c/og/ghclone
+    parsed_url = urlparse(url)
+    url_parts = parsed_url.path.strip("/").split("/")
 
-    normalized_url = re.sub(BASE_NORMALIZE_REGEX, "", url)
-    args = normalized_url.split("/")
+    if "tree" in url_parts:
+        url_parts.remove("tree")
 
-    owner = args.pop(0)
-    repo = args.pop(0)
+    owner = owner or url_parts[0]
+    repo = repo or url_parts[1]
+    if not branch and len(url_parts) < 3:
+        error("no branch specified by URL or argument.")
+    else:
+        branch = branch or url_parts[2]
 
-    if "tree" in args:
-        ref = args.pop(args.index("tree") + 1)
-        args.pop(args.index("tree"))
+    subdir = subdir or "/".join(url_parts[3:]) or ""
 
-    if args:
-        rel_url = "/".join(args)
+    return urljoin(
+        API_BASE_URL,
+        TREE_ENDPOINT.format(owner=owner, repo=repo, sha=branch, subdir=subdir),
+    )
 
 
 def resolve_path(path: os.PathLike, dir: os.PathLike) -> str:

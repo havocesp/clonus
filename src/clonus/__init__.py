@@ -13,8 +13,6 @@ see './LICENSE' for more information.
 from rich.console import Console
 from urllib3 import PoolManager
 
-# from requests import Session
-
 
 __version__ = "0.1.0"
 
@@ -36,7 +34,7 @@ def error(message: str) -> None:
         message (str): The error message to print.
     """
 
-    CPRINT(f"[bold red]!!![/red] {message}")
+    CPRINT(f"[bold red]!!![/] {message}")
     exit(1)
 
 
