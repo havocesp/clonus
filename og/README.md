@@ -1,8 +1,6 @@
-# **Clonus**: *Partial GitHub Cloning in Python*
+# GitHub clone
 
-## original library PyPi downloads:
 [![PyPi Downloads](https://img.shields.io/pypi/dm/github-clone.svg?style=for-the-badge&logo=pypi)](https://pypi.org/project/github-clone/)
-[![PyPi Version](https://img.shields.io/pypi/v/github-clone.svg?style=for-the-badge&logo=pypi)](https://pypi.org/project/github-clone/)
 
 Git clone (download) any sub-directories of any GitHub repository (at any reference) without having to clone the entire repository, with only its GitHub URL.
 Uses the GitHub API to recursively clone the sub-directories tree and files.
@@ -38,25 +36,24 @@ Uses Python 3.3+
 GitHub clone (git.io/ghclone)
 
 Usage:
-    ghclone <url> [-t | --token=<token>]
-    ghclone (-h | --help)
-    ghclone (-v | --version)
+  ghclone <url> [-t | --token=<token>]
+  ghclone (-h | --help)
+  ghclone (-v | --version)
 
 Examples:
-    ghclone https://github.com/HR/Crypter/tree/master/app
-    ghclone https://github.com/HR/Crypter/tree/dev/app
-    ghclone https://github.com/HR/Crypter/tree/v3.1.0/build
-    ghclone https://github.com/HR/Crypter/tree/cbee54dd720bb8aaa3a2111fcec667ca5f700510/build
-    ghclone https://github.com/HR/Picturesque/tree/master/app/src -t <TOKEN>
+  ghclone https://github.com/HR/Crypter/tree/master/app
+  ghclone https://github.com/HR/Crypter/tree/dev/app
+  ghclone https://github.com/HR/Crypter/tree/v3.1.0/build
+  ghclone https://github.com/HR/Crypter/tree/cbee54dd720bb8aaa3a2111fcec667ca5f700510/build
+  ghclone https://github.com/HR/Picturesque/tree/master/app/src -t li50d67757gm20556d53f08126215725a698560b
 
 Options:
-    -h --help           Show this screen.
-    -v --version        Show version.
-    -t --token=<token>  Set a GitHub OAuth token (see https://developer.github.com/v3/#rate-limiting).
+  -h --help           Show this screen.
+  -v --version        Show version.
+  -t --token=<token>  Set a GitHub OAuth token (see https://developer.github.com/v3/#rate-limiting).
 ```
 # License
 Copyright (C) 2019-2021 Habib Rehman (https://git.io/HR)
-Copyright (C) 2023 hex benjamin (https://dev.hexbenjam.in)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

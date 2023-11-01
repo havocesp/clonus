@@ -1,6 +1,20 @@
 [build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[project]
+name = "clonus"
+version = "0.1.0"
+description = "partial github cloning!"
+authors = [
+    {name = "hex benjamin", email = "hex@hexbenjam.in"},
+    {name = "Habib Rehman", email = "hi@habibrehman.com"},
 ]
-build-backend = "setuptools.build_meta"
+dependencies = [
+    "requests>=2.31.0",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+
