@@ -17,9 +17,9 @@ import os
 from dotenv import load_dotenv
 import click
 
-from clonus import __version__, CPRINT, SESSION, error, warn
+from clonus import __version__, CPRINT, HTTP, error
 
-from rich import inspect
+# from rich import inspect
 
 
 @click.command()
@@ -50,7 +50,9 @@ def clone(
         error(CPRINT, "no url specified.")
 
     if token:
-        SESSION.headers.update({"Authorization": f"Bearer {token}"})
+        HTTP.headers.update({"Authorization": f"Bearer {token}"})
+
+    # HTTP.request("GET", "")
 
 
 if __name__ == "__main__":

@@ -11,19 +11,19 @@ see './LICENSE' for more information.
 """
 
 from rich.console import Console
-from requests import Session
+from urllib3 import PoolManager
+
+# from requests import Session
 
 
 __version__ = "0.1.0"
 
-SESSION = Session()
-SESSION.headers.update(
-    {
-        "User-Agent": f"dev.hexbenjam.in/clonus {__version__}",
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-    }
-)
+_headers = {
+    "User-Agent": f"dev.hexbenjam.in/clonus {__version__}",
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+}
+HTTP = PoolManager(headers=_headers)
 
 CPRINT = Console().print
 
