@@ -15,6 +15,7 @@ dependencies = [
     "requests>=2.31.0",
     "click>=8.1.7",
     "rich>=13.6.0",
+    "python-dotenv>=1.0.0",
 ]
 requires-python = ">=3.11"
 readme = "README.md"
