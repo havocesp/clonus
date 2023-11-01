@@ -14,23 +14,23 @@ import os
 import re
 from urllib.parse import urlparse, urljoin
 
-from clonus import error
+from clonus import error, HTTP
 
 
 API_BASE_URL = "https://api.github.com"
-TREE_ENDPOINT = "/repos/{owner}/{repo}/git/trees/{sha}/{subdir}"
+CONTENTS_ENDPOINT = "/repos/{owner}/{repo}/contents/{subdir}"
 BASE_NORMALIZE_REGEX = re.compile(r".*github\.com\/")
 
 
-def make_request_url(url: str, owner: str, repo: str, branch: str, subdir: str) -> str:
+def make_request_url(
+    url: str = None, owner: str = None, repo: str = None, subdir: str = None
+) -> str:
     """
     Generate a request URL based on the provided parameters.
 
     Args:
-        url (str): The original URL.
         owner (str): The owner (or username).
         repo (str): The repository name.
-        branch (str): The branch or reference.
         subdir (str): The subdirectory, if applicable.
 
     Returns:
@@ -39,26 +39,21 @@ def make_request_url(url: str, owner: str, repo: str, branch: str, subdir: str) 
     Raises:
         None.
     """
-
-    parsed_url = urlparse(url)
-    url_parts = parsed_url.path.strip("/").split("/")
-
-    if "tree" in url_parts:
-        url_parts.remove("tree")
-
-    owner = owner or url_parts[0]
-    repo = repo or url_parts[1]
-    if not branch and len(url_parts) < 3:
-        error("no branch specified by URL or argument.")
-    else:
-        branch = branch or url_parts[2]
-
-    subdir = subdir or "/".join(url_parts[3:]) or ""
-
+    if url:
+        owner, repo = urlparse(url).path.split("/")[1:3]
     return urljoin(
         API_BASE_URL,
-        TREE_ENDPOINT.format(owner=owner, repo=repo, sha=branch, subdir=subdir),
+        CONTENTS_ENDPOINT.format(owner=owner, repo=repo, subdir=subdir or ""),
     )
+
+
+def make_request(owner, repo, subdir, req_url, params):
+    response = HTTP.request("GET", req_url)
+    try:
+        response.raise_for_status()
+    except Exception as e:
+        error(f"failed to fetch metadata for '{owner}/{repo}' at '{subdir}'.")
+    return response.json()
 
 
 def resolve_path(path: os.PathLike, dir: os.PathLike) -> str:
