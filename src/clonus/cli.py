@@ -21,6 +21,8 @@ from rich.console import Console
 
 from clonus import __version__
 
+from rich import inspect
+
 
 def setup() -> None:
     """
@@ -31,15 +33,21 @@ def setup() -> None:
     """
 
     load_dotenv()
-    console = Console()
+
     req_session = requests.Session()
-    req_session.headers.update({"User-Agent": f"hexbenjam.in/ {__version__}"})
-    return console, req_session
+    req_session.headers.update(
+        {
+            "User-Agent": f"dev.hexbenjam.in/clonus {__version__}",
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+        }
+    )
+    return req_session
 
 
 def error(print_func: callable, message: str) -> None:
     """
-    Print an error message and exit.
+    Print a syled error message and exit.
 
     Args:
         message (str): The error message to print.
@@ -50,31 +58,39 @@ def error(print_func: callable, message: str) -> None:
 
 
 @click.command()
-@click.option("-v", "--version", is_flag=True, help="print version and exit")
 @click.argument("url")
 @click.option(
-    "-t", "--token", default=os.getenv("GITHUB_TOKEN"), help="github oauth token"
+    "-v",
+    "--version",
+    is_flag=True,
+    help="print version and exit",
+)
+@click.option(
+    "-t",
+    "--token",
+    default=os.getenv("GH_TOKEN"),
+    help="github oauth (classic) token",
 )
 # @click.option("-p", "--path", default=".", help="path to clone to")
 def clone(
-    session: requests.Session,
-    print_func: callable,
     version: bool,
     url: str = None,
     token: str = None,
 ) -> None:
     if version:
-        print(__version__)
+        _print(__version__)
         exit(0)
 
     if not url:
-        error(print_func, "no url specified.")
+        error(_print, "no url specified.")
 
     if token:
-        session.headers.update({"Authorization": f"token {token}"})
+        _reqsession.headers.update({"Authorization": f"Bearer {token}"})
+
+    _print(url)
 
 
 if __name__ == "__main__":
-    _console, _reqsession = setup()
-    _print = _console.print
-    clone(_reqsession, _print)
+    _reqsession = setup()
+    _print = Console().print
+    clone()
