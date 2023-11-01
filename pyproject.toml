@@ -5,7 +5,7 @@ build-backend = "pdm.backend"
 
 [project]
 name = "clonus"
-version = "0.1.0"
+dynamic = ["version"]
 description = "partial github cloning!"
 authors = [
     {name = "hex benjamin", email = "hex@hexbenjam.in"},
@@ -13,8 +13,17 @@ authors = [
 ]
 dependencies = [
     "requests>=2.31.0",
+    "click>=8.1.7",
+    "rich>=13.6.0",
 ]
 requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "Apache-2.0"}
 
+[tool.pdm.version]
+source = "file"
+path = "src/clonus/__init__.py"
+[tool.pdm.dev-dependencies]
+dev = [
+    "sourcery>=1.12.0",
+]
