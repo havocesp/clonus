@@ -10,6 +10,7 @@ licensed under the APACHE-v2.0 license.
 see './LICENSE' for more information.
 """
 
+import os
 import re
 
 from clonus import error
