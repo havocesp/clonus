@@ -1,5 +1,5 @@
 """
-'CLONUS'
+'CLONUS.cli'
 partial github cloner
 (C) 2023 hex benjamin (https://dev.hexbenjam.in)
 
@@ -17,8 +17,8 @@ import os
 import click
 from dotenv import load_dotenv
 
-from clonus import __version__, CPRINT, HTTP, error
-from clonus.urls import make_request_url, make_request
+from clonus import __version__, CPRINT, error
+from clonus.repo import Repo
 
 # from rich import inspect
 
@@ -30,13 +30,13 @@ from clonus.urls import make_request_url, make_request
     "-t",
     "--token",
     default=os.getenv("GH_TOKEN"),
-    help="github oauth (classic) token",
+    help="github oauth (classic) token. defaults to the 'GH_TOKEN' environment variable.",
 )
 @click.option("-O", "--owner", default=None, help="repository owner")
 @click.option("-R", "--repo", default=None, help="repository name")
 @click.option("--ref", default=None, help="ref [commit/branch/tag] name")
 @click.option("--subdir", default=None, help="subdirectory of the repo to clone")
-@click.option("-o", "--output-dir", default=os.getcwd(), help="directory to clone into")
+@click.option("-L", "--local-path", default=None, help="directory to clone into")
 def clone(
     version: bool = False,
     url: str = None,
@@ -45,34 +45,29 @@ def clone(
     repo: str = None,
     ref: str = None,
     subdir: str = None,
-    output_dir: str = os.getcwd(),
+    local_path: str = None,
 ) -> None:
+    CPRINT("")
     CPRINT("welcome to [bold cornflower_blue]CLONUS[/]!\n+++\n")
 
     if version:
         CPRINT(f"v[bold cornflower_blue]{__version__}[/]")
         exit(0)
 
+    load_dotenv()
+    token = os.getenv("GH_TOKEN") or token
+
     if not url and not (owner and repo):
         error("no url specified.")
-    elif not url:
-        url = f"https://github.com/{owner}/{repo}"
 
-    if token:
-        HTTP.headers.update({"Authorization": f"Bearer {token}"})
+    if not local_path:
+        local_path = os.path.join(os.getcwd(), "repos")
 
-    req_url = make_request_url(url, owner, repo, subdir)
-    output_dir = os.path.abspath(output_dir)
-    params = f"?recursive=1&ref={ref}" if ref else "?recursive=1"
+    repo_obj = Repo(url, token, owner, repo, ref, subdir, os.path.abspath(local_path))
 
-    # CPRINT(f"final url: [bold cornflower_blue]{req_url}[/]")
-    # CPRINT(f"target dir: [bold medium_orchid]{target_dir}[/]")
-
-    # Make the GET request
-    response = make_request(owner, repo, subdir, req_url, params)
+    response = repo_obj.request()
     CPRINT(response)
 
 
 if __name__ == "__main__":
-    load_dotenv()
     clone()

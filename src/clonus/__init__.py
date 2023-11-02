@@ -16,13 +16,6 @@ from urllib3 import PoolManager
 
 __version__ = "0.1.0"
 
-_headers = {
-    "User-Agent": f"dev.hexbenjam.in/clonus {__version__}",
-    "Accept": "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-}
-HTTP = PoolManager(headers=_headers)
-
 CPRINT = Console().print
 
 
